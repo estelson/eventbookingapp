@@ -86,7 +86,7 @@ class _HomeState extends State<Home> {
             const SizedBox(height: 20),
 
             /// Categories
-            Container(
+            SizedBox(
               height: 100,
               child: ListView(
                 scrollDirection: Axis.horizontal,
@@ -342,7 +342,7 @@ class _HomeState extends State<Home> {
               ],
             ),
 
-            Row(
+            const Row(
               children: [
                 Icon(Icons.location_on),
                 Text(
