@@ -1,3 +1,4 @@
+import 'package:eventbookingapp/admin/upload_event.dart';
 import 'package:eventbookingapp/firebase_options.dart';
 import 'package:eventbookingapp/pages/signup.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -35,7 +36,8 @@ class MyApp extends StatelessWidget {
       // home: const Home(),
       // home: const BottomNav(),
       // home: const DetailPage(),
-      home: const SignUp(),
+      // home: const SignUp(),
+      home: const UploadEvent(),
     );
   }
 }

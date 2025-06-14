@@ -86,12 +86,16 @@ class _SignUpState extends State<SignUp> {
                       const Text(
                         "Sign in with Google",
                         textAlign: TextAlign.center,
-                        style: TextStyle(color: Colors.white, fontSize: 23, fontWeight: FontWeight.bold),
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 23,
+                          fontWeight: FontWeight.bold,
+                        ),
                       ),
                     ],
                   ),
                 ),
-              )
+              ),
             ],
           ),
         ),
