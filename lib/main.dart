@@ -1,4 +1,4 @@
-import 'package:eventbookingapp/pages/detail_page.dart';
+import 'package:eventbookingapp/pages/signup.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
@@ -30,7 +30,8 @@ class MyApp extends StatelessWidget {
       // home: const MyHomePage(title: 'Flutter Demo Home Page'),
       // home: const Home(),
       // home: const BottomNav(),
-      home: const DetailPage(),
+      // home: const DetailPage(),
+      home: const SignUp(),
     );
   }
 }
