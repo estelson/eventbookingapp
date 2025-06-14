@@ -39,12 +39,14 @@ dependencies:
   # Firebase packages
   firebase_core:
   firebase_auth:
-  #cloud_firestore:
+  cloud_firestore:
   firebase_storage:
 
   #Other packages
-  #google_sign_in:
+  google_sign_in:
   curved_navigation_bar:
+  image_picker:
+  random_string:
 
 dev_dependencies:
   flutter_test:
