@@ -1,3 +1,4 @@
+import 'package:eventbookingapp/services/auth.dart';
 import 'package:flutter/material.dart';
 
 class SignUp extends StatefulWidget {
@@ -57,33 +58,38 @@ class _SignUpState extends State<SignUp> {
               const SizedBox(height: 50),
 
               /// SignIn with Google button
-              Container(
-                height: 70,
-                margin: const EdgeInsets.only(left: 30, right: 30),
-                decoration: const BoxDecoration(
-                  color: Color(0xff6351ec),
-                  borderRadius: BorderRadius.all(Radius.circular(50)),
-                ),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    /// Google logo
-                    Image.asset(
-                      "assets/images/google.png",
-                      height: 30,
-                      width: 30,
-                      fit: BoxFit.cover,
-                    ),
+              GestureDetector(
+                onTap: () {
+                  AuthMethods().signInWithGoogle(context);
+                },
+                child: Container(
+                  height: 70,
+                  margin: const EdgeInsets.only(left: 30, right: 30),
+                  decoration: const BoxDecoration(
+                    color: Color(0xff6351ec),
+                    borderRadius: BorderRadius.all(Radius.circular(50)),
+                  ),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      /// Google logo
+                      Image.asset(
+                        "assets/images/google.png",
+                        height: 30,
+                        width: 30,
+                        fit: BoxFit.cover,
+                      ),
 
-                    const SizedBox(width: 20),
+                      const SizedBox(width: 20),
 
-                    /// Button text
-                    const Text(
-                      "Sign in with Google",
-                      textAlign: TextAlign.center,
-                      style: TextStyle(color: Colors.white, fontSize: 23, fontWeight: FontWeight.bold),
-                    ),
-                  ],
+                      /// Button text
+                      const Text(
+                        "Sign in with Google",
+                        textAlign: TextAlign.center,
+                        style: TextStyle(color: Colors.white, fontSize: 23, fontWeight: FontWeight.bold),
+                      ),
+                    ],
+                  ),
                 ),
               )
             ],
