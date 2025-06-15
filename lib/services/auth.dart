@@ -40,10 +40,7 @@ class AuthMethods {
             backgroundColor: Colors.green,
             content: Text(
               "Registered successfully!!!",
-              style: TextStyle(
-                fontSize: 20,
-                fontWeight: FontWeight.bold,
-              ),
+              style: TextStyle(fontSize: 20),
             ),
           ),
         );

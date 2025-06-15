@@ -1,11 +1,10 @@
-import 'package:eventbookingapp/admin/upload_event.dart';
 import 'package:eventbookingapp/firebase_options.dart';
-import 'package:eventbookingapp/pages/signup.dart';
+import 'package:eventbookingapp/pages/bottomnav.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
-Future<void> main() async{
+Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
   SystemChrome.setSystemUIOverlayStyle(
@@ -34,10 +33,10 @@ class MyApp extends StatelessWidget {
       ),
       // home: const MyHomePage(title: 'Flutter Demo Home Page'),
       // home: const Home(),
-      // home: const BottomNav(),
+      home: const BottomNav(),
       // home: const DetailPage(),
       // home: const SignUp(),
-      home: const UploadEvent(),
+      // home: const UploadEvent(),
     );
   }
 }
