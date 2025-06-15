@@ -16,6 +16,7 @@ class UploadEvent extends StatefulWidget {
 
 class _UploadEventState extends State<UploadEvent> {
   TextEditingController nameController = TextEditingController();
+  TextEditingController locationController = TextEditingController();
   TextEditingController priceController = TextEditingController();
   TextEditingController detailController = TextEditingController();
 
@@ -154,6 +155,37 @@ class _UploadEventState extends State<UploadEvent> {
                     decoration: const InputDecoration(
                       border: InputBorder.none,
                       hintText: "Enter price",
+                    ),
+                  ),
+                ),
+
+                const SizedBox(height: 30),
+
+                /// Event location title
+                const Text(
+                  "Event location",
+                  style: TextStyle(
+                    color: Colors.black,
+                    fontSize: 22,
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
+
+                const SizedBox(height: 10),
+
+                /// Event location field
+                Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 20),
+                  width: MediaQuery.of(context).size.width,
+                  decoration: BoxDecoration(
+                    color: const Color(0xffececf8),
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                  child: TextField(
+                    controller: locationController,
+                    decoration: const InputDecoration(
+                      border: InputBorder.none,
+                      hintText: "Enter event location",
                     ),
                   ),
                 ),
@@ -308,6 +340,7 @@ class _UploadEventState extends State<UploadEvent> {
                     Map<String, dynamic> uploadEvent = {
                       "Image": downloadUrl,
                       "Name": nameController.text.trim(),
+                      "Location": locationController.text.trim(),
                       "Price": priceController.text.trim(),
                       "Category": value,
                       "Date": DateFormat("yyyy-MM-dd").format(selectedDate),
@@ -332,6 +365,7 @@ class _UploadEventState extends State<UploadEvent> {
                         selectedImage = null;
                         nameController.text = "";
                         priceController.text = "";
+                        locationController.text = "";
                         value = null;
                         selectedDate = DateTime.now();
                         selectedTime = const TimeOfDay(hour: 10, minute: 00);
