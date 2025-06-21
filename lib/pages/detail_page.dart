@@ -1,13 +1,30 @@
 import 'package:flutter/material.dart';
 
 class DetailPage extends StatefulWidget {
-  const DetailPage({super.key});
+  final String image;
+  final String name;
+  final String location;
+  final String date;
+  final String detail;
+  final String price;
+
+  const DetailPage({
+    super.key,
+    required this.image,
+    required this.name,
+    required this.location,
+    required this.date,
+    required this.detail,
+    required this.price,
+  });
 
   @override
   State<DetailPage> createState() => _DetailPageState();
 }
 
 class _DetailPageState extends State<DetailPage> {
+  int ticket = 1;
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -17,8 +34,8 @@ class _DetailPageState extends State<DetailPage> {
           Stack(
             children: [
               /// Event image
-              Image.asset(
-                "assets/images/event.jpg",
+              Image.network(
+                widget.image,
                 width: MediaQuery.of(context).size.width,
                 height: MediaQuery.of(context).size.height / 2,
                 fit: BoxFit.cover,
@@ -56,47 +73,34 @@ class _DetailPageState extends State<DetailPage> {
                       decoration: const BoxDecoration(
                         color: Colors.black45,
                       ),
-                      child: const Column(
+                      child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           /// Event title
                           Text(
-                            "Dua Lipa Concert",
-                            style: TextStyle(
+                            widget.name,
+                            overflow: TextOverflow.ellipsis,
+                            style: const TextStyle(
                               color: Colors.white,
                               fontSize: 25,
                               fontWeight: FontWeight.bold,
                             ),
                           ),
 
+                          const SizedBox(height: 5),
+
                           /// Event date
                           Row(
                             children: [
-                              Icon(
+                              const Icon(
                                 Icons.calendar_month,
                                 color: Colors.white,
                               ),
-                              SizedBox(width: 10),
+                              const SizedBox(width: 10),
                               Text(
-                                "31 Dec 2024",
-                                style: TextStyle(
-                                  color: Color.fromARGB(211, 255, 255, 255),
-                                  fontSize: 19,
-                                ),
-                              ),
-
-                              SizedBox(width: 20),
-
-                              /// Event location
-                              Icon(
-                                Icons.location_on_outlined,
-                                color: Colors.white,
-                              ),
-                              SizedBox(width: 10),
-                              Text(
+                                widget.date,
                                 overflow: TextOverflow.ellipsis,
-                                "Mumbai, India",
-                                style: TextStyle(
+                                style: const TextStyle(
                                   color: Color.fromARGB(211, 255, 255, 255),
                                   fontSize: 19,
                                 ),
@@ -104,7 +108,26 @@ class _DetailPageState extends State<DetailPage> {
                             ],
                           ),
 
-                          SizedBox(height: 20),
+                          /// Event location
+                          Row(
+                            children: [
+                              const Icon(
+                                Icons.location_on_outlined,
+                                color: Colors.white,
+                              ),
+                              Padding(
+                                padding: const EdgeInsets.all(8.0),
+                                child: Text(
+                                  widget.location,
+                                  overflow: TextOverflow.ellipsis,
+                                  style: const TextStyle(
+                                    color: Color.fromARGB(211, 255, 255, 255),
+                                    fontSize: 19,
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
                         ],
                       ),
                     ),
@@ -132,11 +155,12 @@ class _DetailPageState extends State<DetailPage> {
           const SizedBox(height: 10),
 
           /// Event description
-          const Padding(
-            padding: EdgeInsets.only(left: 20),
+          Padding(
+            padding: const EdgeInsets.only(left: 20),
             child: Text(
-              "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book.",
-              style: TextStyle(
+              widget.detail,
+              overflow: TextOverflow.ellipsis,
+              style: const TextStyle(
                 color: Colors.black87,
                 fontSize: 18,
                 fontWeight: FontWeight.w500,
@@ -172,21 +196,30 @@ class _DetailPageState extends State<DetailPage> {
                     ),
                     borderRadius: BorderRadius.circular(10),
                   ),
-                  child: const Column(
+                  child:  Column(
                     children: [
                       /// Increase button
-                      Text(
-                        "+",
-                        style: TextStyle(
-                          color: Colors.black,
-                          fontSize: 25,
+                      GestureDetector(
+                        onTap: () {
+                          ticket++;
+
+                          setState(() {
+
+                          });
+                        },
+                        child: const Text(
+                          "+",
+                          style: TextStyle(
+                            color: Colors.black,
+                            fontSize: 25,
+                          ),
                         ),
                       ),
 
                       /// Quantity
                       Text(
-                        "3",
-                        style: TextStyle(
+                        ticket.toString(),
+                        style: const TextStyle(
                           color: Color(0xff6351ec),
                           fontSize: 25,
                           fontWeight: FontWeight.bold,
@@ -194,11 +227,22 @@ class _DetailPageState extends State<DetailPage> {
                       ),
 
                       /// Decrease button
-                      Text(
-                        "-",
-                        style: TextStyle(
-                          color: Colors.black,
-                          fontSize: 25,
+                      GestureDetector(
+                        onTap: () {
+                          if(ticket > 1) {
+                            ticket--;
+                          }
+
+                          setState(() {
+
+                          });
+                        },
+                        child: const Text(
+                          "-",
+                          style: TextStyle(
+                            color: Colors.black,
+                            fontSize: 25,
+                          ),
                         ),
                       ),
                     ],
@@ -217,9 +261,9 @@ class _DetailPageState extends State<DetailPage> {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 /// Amount
-                const Text(
-                  "Amount: \$150.0",
-                  style: TextStyle(
+                Text(
+                  "Amount: \$${widget.price}",
+                  style: const TextStyle(
                     color: Color(0xff6351ec),
                     fontSize: 23,
                     fontWeight: FontWeight.bold,

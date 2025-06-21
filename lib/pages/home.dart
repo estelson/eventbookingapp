@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:eventbookingapp/pages/detail_page.dart';
 import 'package:eventbookingapp/services/database.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
@@ -11,13 +12,11 @@ class Home extends StatefulWidget {
 }
 
 class _HomeState extends State<Home> {
+  /// ////////////////////////////////////////////
+  /// Variables declaration and initialization ///
+  /// ////////////////////////////////////////////
+
   Stream? eventStream;
-
-  Future<void> onTheLoad() async {
-    eventStream = await DatabaseMethods().getAllEvents();
-
-    setState(() {});
-  }
 
   @override
   void initState() {
@@ -25,6 +24,18 @@ class _HomeState extends State<Home> {
     super.initState();
   }
 
+  /// ////////////////////////////////////////////
+  /// Auxiliary methods, widgets and functions ///
+  /// ////////////////////////////////////////////
+
+  /// Get all events from database
+  Future<void> onTheLoad() async {
+    eventStream = await DatabaseMethods().getAllEvents();
+
+    setState(() {});
+  }
+
+  /// Upcoming events list
   Widget allEvents() {
     return StreamBuilder(
         stream: eventStream,
@@ -41,101 +52,122 @@ class _HomeState extends State<Home> {
                     DateTime parsedDate = DateTime.parse(inputDate);
                     String formattedDate = DateFormat("MMM,\ndd\nyyyy").format(parsedDate);
 
-                    return Padding(
-                      padding: const EdgeInsets.only(bottom: 20),
-                      child: Column(
-                        children: [
-                          Container(
-                            margin: const EdgeInsets.only(right: 20),
-                            width: MediaQuery.of(context).size.width,
-                            decoration: const BoxDecoration(),
-                            child: Stack(
+                    return GestureDetector(
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => DetailPage(
+                              image: ds["Image"],
+                              name: ds["Name"],
+                              location: ds["Location"],
+                              date: ds["Date"],
+                              detail: ds["Detail"],
+                              price: ds["Price"],
+                            ),
+                          ),
+                        );
+                      },
+                      child: Padding(
+                        padding: const EdgeInsets.only(bottom: 20),
+                        child: Column(
+                          children: [
+                            Container(
+                              margin: const EdgeInsets.only(right: 20),
+                              width: MediaQuery.of(context).size.width,
+                              decoration: const BoxDecoration(),
+                              child: Stack(
+                                children: [
+                                  ClipRRect(
+                                    borderRadius: BorderRadius.circular(10),
+                                    child: Image.network(
+                                      ds["Image"],
+                                      height: 200,
+                                      width: MediaQuery.of(context).size.width,
+                                      fit: BoxFit.cover,
+                                    ),
+                                  ),
+                                  Container(
+                                    margin: const EdgeInsets.only(left: 10, top: 10),
+                                    width: 50,
+                                    decoration: BoxDecoration(
+                                      color: Colors.white,
+                                      borderRadius: BorderRadius.circular(10),
+                                    ),
+                                    child: Center(
+                                      child: Text(
+                                        formattedDate,
+                                        textAlign: TextAlign.center,
+                                        style: const TextStyle(
+                                          fontSize: 14,
+                                          fontWeight: FontWeight.w500,
+                                          color: Colors.black,
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                            const SizedBox(height: 5),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
-                                ClipRRect(
-                                  borderRadius: BorderRadius.circular(10),
-                                  child: Image.network(
-                                    ds["Image"],
-                                    height: 200,
-                                    width: MediaQuery.of(context).size.width,
-                                    fit: BoxFit.cover,
+                                Text(
+                                  ds["Name"],
+                                  textAlign: TextAlign.center,
+                                  style: const TextStyle(
+                                    fontSize: 24,
+                                    fontWeight: FontWeight.bold,
+                                    color: Colors.black,
                                   ),
                                 ),
-                                Container(
-                                  margin: const EdgeInsets.only(left: 10, top: 10),
-                                  width: 50,
-                                  decoration: BoxDecoration(
-                                    color: Colors.white,
-                                    borderRadius: BorderRadius.circular(10),
-                                  ),
-                                  child: Center(
-                                    child: Text(
-                                      formattedDate,
-                                      textAlign: TextAlign.center,
-                                      style: const TextStyle(
-                                        fontSize: 14,
-                                        fontWeight: FontWeight.w500,
-                                        color: Colors.black,
-                                      ),
+                                Padding(
+                                  padding: const EdgeInsets.only(right: 20),
+                                  child: Text(
+                                    "\$${ds["Price"]}",
+                                    textAlign: TextAlign.center,
+                                    style: const TextStyle(
+                                      fontSize: 24,
+                                      fontWeight: FontWeight.bold,
+                                      color: Color(0xff6351ec),
                                     ),
                                   ),
                                 ),
                               ],
                             ),
-                          ),
-                          const SizedBox(height: 5),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Text(
-                                ds["Name"],
-                                textAlign: TextAlign.center,
-                                style: const TextStyle(
-                                  fontSize: 24,
-                                  fontWeight: FontWeight.bold,
-                                  color: Colors.black,
-                                ),
-                              ),
-                              Padding(
-                                padding: const EdgeInsets.only(right: 20),
-                                child: Text(
-                                  "\$${ds["Price"]}",
+                            Row(
+                              children: [
+                                const Icon(Icons.location_on),
+                                Text(
+                                  ds["Location"],
                                   textAlign: TextAlign.center,
                                   style: const TextStyle(
-                                    fontSize: 24,
-                                    fontWeight: FontWeight.bold,
-                                    color: Color(0xff6351ec),
+                                    fontSize: 22,
+                                    fontWeight: FontWeight.w500,
+                                    color: Colors.black,
                                   ),
                                 ),
-                              ),
-                            ],
-                          ),
-                          Row(
-                            children: [
-                              const Icon(Icons.location_on),
-                              Text(
-                                ds["Location"],
-                                textAlign: TextAlign.center,
-                                style: const TextStyle(
-                                  fontSize: 22,
-                                  fontWeight: FontWeight.w500,
-                                  color: Colors.black,
-                                ),
-                              ),
-                            ],
-                          ),
-                          const SizedBox(height: 10),
-                          const Divider(
-                            color: Colors.grey,
-                            height: 0.1,
-                            endIndent: 20,
-                          ),
-                        ],
+                              ],
+                            ),
+                            const SizedBox(height: 10),
+                            const Divider(
+                              color: Colors.grey,
+                              height: 0.1,
+                              endIndent: 20,
+                            ),
+                          ],
+                        ),
                       ),
                     );
                   })
               : Container();
         });
   }
+
+  /// /////////////
+  /// Screen UI ///
+  /// /////////////
 
   @override
   Widget build(BuildContext context) {
