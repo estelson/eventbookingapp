@@ -48,6 +48,8 @@ dependencies:
   image_picker:
   random_string:
   intl:
+  flutter_stripe:
+  http:
 
 dev_dependencies:
   flutter_test:

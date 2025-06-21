@@ -1,4 +1,9 @@
+import 'dart:convert';
+
+import 'package:eventbookingapp/services/data.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_stripe/flutter_stripe.dart';
+import 'package:http/http.dart' as http;
 
 class DetailPage extends StatefulWidget {
   final String image;
@@ -24,6 +29,15 @@ class DetailPage extends StatefulWidget {
 
 class _DetailPageState extends State<DetailPage> {
   int ticket = 1;
+  double total = 0.0;
+
+  Map<String, dynamic>? paymentIntent;
+
+  @override
+  void initState() {
+    total = double.parse(widget.price);
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -196,16 +210,16 @@ class _DetailPageState extends State<DetailPage> {
                     ),
                     borderRadius: BorderRadius.circular(10),
                   ),
-                  child:  Column(
+                  child: Column(
                     children: [
                       /// Increase button
                       GestureDetector(
                         onTap: () {
+                          total = total + double.parse(widget.price);
+
                           ticket++;
 
-                          setState(() {
-
-                          });
+                          setState(() {});
                         },
                         child: const Text(
                           "+",
@@ -229,13 +243,13 @@ class _DetailPageState extends State<DetailPage> {
                       /// Decrease button
                       GestureDetector(
                         onTap: () {
-                          if(ticket > 1) {
+                          if (ticket > 1) {
+                            total = total + double.parse(widget.price);
+
                             ticket--;
                           }
 
-                          setState(() {
-
-                          });
+                          setState(() {});
                         },
                         child: const Text(
                           "-",
@@ -262,7 +276,7 @@ class _DetailPageState extends State<DetailPage> {
               children: [
                 /// Amount
                 Text(
-                  "Amount: \$${widget.price}",
+                  "Amount: \$${total.toString()}",
                   style: const TextStyle(
                     color: Color(0xff6351ec),
                     fontSize: 23,
@@ -273,20 +287,25 @@ class _DetailPageState extends State<DetailPage> {
                 const SizedBox(width: 20),
 
                 /// Book button
-                Container(
-                  width: 170,
-                  height: 50,
-                  decoration: BoxDecoration(
-                    color: const Color(0xff6351ec),
-                    borderRadius: BorderRadius.circular(10),
-                  ),
-                  child: const Center(
-                    child: Text(
-                      "Book now",
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 25,
-                        fontWeight: FontWeight.bold,
+                GestureDetector(
+                  onTap: () {
+                    makePayment(total.toString());
+                  },
+                  child: Container(
+                    width: 170,
+                    height: 50,
+                    decoration: BoxDecoration(
+                      color: const Color(0xff6351ec),
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                    child: const Center(
+                      child: Text(
+                        "Book now",
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 25,
+                          fontWeight: FontWeight.bold,
+                        ),
                       ),
                     ),
                   ),
@@ -297,5 +316,131 @@ class _DetailPageState extends State<DetailPage> {
         ],
       ),
     );
+  }
+
+  Future<void> makePayment(String amount) async {
+    try {
+      paymentIntent = await createPaymentIntent(amount, 'USD');
+
+      await Stripe.instance
+          .initPaymentSheet(
+            paymentSheetParameters: SetupPaymentSheetParameters(
+              paymentIntentClientSecret: paymentIntent?["client_secret"],
+              // applePay: true,
+              // googlePay: true,
+              style: ThemeMode.dark,
+              merchantDisplayName: "Estelson",
+            ),
+          )
+          .then((value) {});
+
+      displayPaymentSheet(amount);
+    } catch (e, s) {
+      debugPrint("");
+      debugPrint("");
+      debugPrint("---------------------------------------- ERROR: ---------------------------------------------------");
+      debugPrint("Exception: $e,\n\nStackTrace: $s");
+      debugPrint("---------------------------------------------------------------------------------------------------");
+      debugPrint("");
+      debugPrint("");
+    }
+  }
+
+  Future<void> displayPaymentSheet(String amount) async {
+    try {
+      await Stripe.instance.presentPaymentSheet().then((value) async {
+        Map<String, dynamic> bookingDetail = {
+          "Number": ticket.toString(),
+          "Total": total.toString(),
+          "Event": widget.name,
+          "Image": widget.image,
+          "Detail": widget.detail,
+          "Location": widget.location,
+          "Date": widget.date,
+        };
+
+        /// ignore: use_build_context_synchronously
+        showDialog(
+            context: context,
+            builder: (_) => const AlertDialog(
+                  content: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Row(
+                        children: [
+                          Icon(
+                            Icons.check_circle,
+                            color: Colors.green,
+                          ),
+                          Text("Payment successful")
+                        ],
+                      ),
+                    ],
+                  ),
+                ));
+
+        paymentIntent = null;
+      }).onError((error, stackTrace) {
+        debugPrint("");
+        debugPrint("");
+        debugPrint("---------------------------------------- ERROR: ---------------------------------------------------");
+        debugPrint("Exception: $error");
+        debugPrint("StackTrace: $stackTrace");
+        debugPrint("---------------------------------------------------------------------------------------------------");
+        debugPrint("");
+        debugPrint("");
+      });
+    } on StripeException catch (e) {
+      debugPrint("");
+      debugPrint("");
+      debugPrint("---------------------------------------- ERROR: ---------------------------------------------------");
+      debugPrint("Exception: $e");
+      debugPrint("---------------------------------------------------------------------------------------------------");
+      debugPrint("");
+      debugPrint("");
+
+      showDialog(
+        context: context,
+        builder: (_) => const AlertDialog(
+          content: Text("Canceled"),
+        ),
+      );
+    } catch (e) {
+      debugPrint("");
+      debugPrint("");
+      debugPrint("---------------------------------------- ERROR: ---------------------------------------------------");
+      debugPrint("Exception: $e");
+      debugPrint("---------------------------------------------------------------------------------------------------");
+      debugPrint("");
+      debugPrint("");
+    }
+  }
+
+  Future createPaymentIntent(String amount, String currency) async {
+    try {
+      Map<String, dynamic> body = {"amount": amount, "currency": currency, "payment_method_types[]": "card"};
+
+      var response = await http.post(
+        Uri.parse("https://api.stripe.com/v1/payment_intents"),
+        headers: {"Authorization": "Bearer $secretKey", "Content-Type": "application/x-www-form-urlencoded"},
+        body: body,
+      );
+
+      return jsonDecode(response.body);
+    } catch (err) {
+      debugPrint("");
+      debugPrint("");
+      debugPrint("---------------------------------------- ERROR: ---------------------------------------------------");
+      debugPrint("Exception on charging user: ${err.toString()}");
+      debugPrint("---------------------------------------------------------------------------------------------------");
+      debugPrint("");
+      debugPrint("");
+    }
+  }
+
+  String calculateAmount(String amount) {
+    final calculatedAmount = (double.parse(amount)) * 100;
+
+    return calculatedAmount.toString();
   }
 }
